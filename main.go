@@ -14,8 +14,8 @@ type SlackMessage struct {
 }
 
 func main() {
-	server := os.Getenv("GOTIFY_SERVER")
-	token := os.Getenv("APP_TOKEN")
+	server := getEnvVarOrExit("GOTIFY_SERVER")
+	token := getEnvVarOrExit("APP_TOKEN")
 
 	fmt.Printf("'%s'\n", token)
 
@@ -35,4 +35,15 @@ func main() {
 	})
 
 	router.Run(":8080")
+}
+
+func getEnvVarOrExit(name string) string {
+	variable := os.Getenv(name)
+
+	if len(variable) == 0 {
+		fmt.Printf("Error: '%s' not set\n", name)
+		os.Exit(1)
+	}
+
+	return variable
 }
