@@ -6,17 +6,26 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 )
 
 func Message(title string, msg string, priority int) {
 	server := os.Getenv("GOTIFY_SERVER")
 
-	resp, err := http.PostForm(server+"/message", url.Values{
+	form := url.Values{
 		"title":    {title},
 		"message":  {msg},
 		"priority": {fmt.Sprintf("%d", priority)},
-	})
+	}
+	req, err := http.NewRequest("POST", server+"/message", strings.NewReader(form.Encode()))
+	if err != nil {
+		fmt.Println("Failed to setup message request")
+	}
 
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Add("X-Gotify-Key", "")
+
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		fmt.Println("Failed to send message")
 	}
