@@ -1,29 +1,38 @@
-package main
+package gotify
 
 import (
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 )
 
-func Message(title string, msg string, priority int) {
-	server := os.Getenv("GOTIFY_SERVER")
+type Gotify struct {
+	host string
+	key  string
+}
 
+func New(host string, key string) *Gotify {
+	return &Gotify{
+		host: host,
+		key:  key,
+	}
+}
+
+func (g *Gotify) Message(title string, msg string, priority int) {
 	form := url.Values{
 		"title":    {title},
 		"message":  {msg},
 		"priority": {fmt.Sprintf("%d", priority)},
 	}
-	req, err := http.NewRequest("POST", server+"/message", strings.NewReader(form.Encode()))
+	req, err := http.NewRequest("POST", g.host+"/message", strings.NewReader(form.Encode()))
 	if err != nil {
 		fmt.Println("Failed to setup message request")
 	}
 
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-	req.Header.Add("X-Gotify-Key", "")
+	req.Header.Add("X-Gotify-Key", g.key)
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
