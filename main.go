@@ -18,8 +18,6 @@ func main() {
 	server := getEnvVarOrExit("GOTIFY_SERVER")
 	token := getEnvVarOrExit("APP_TOKEN")
 
-	fmt.Printf("'%s'\n", token)
-
 	gotify := gotify.New(server, token)
 	router := gin.Default()
 
