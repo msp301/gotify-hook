@@ -22,6 +22,8 @@ func main() {
 		}
 
 		fmt.Printf("Got: '%s'\n", msg.Text)
+
+		Message("Test", msg.Text, 5)
 	})
 
 	router.Run(":8080")
