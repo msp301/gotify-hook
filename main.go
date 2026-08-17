@@ -5,6 +5,7 @@ import (
 	"gotify-hook/gotify"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -29,9 +30,18 @@ func main() {
 			return
 		}
 
+		title, body, found := strings.Cut(msg.Text, "\n")
+		if !found {
+			title = "New Message"
+			body = msg.Text
+		}
+
+		title = strings.TrimSpace(title)
+		body = strings.TrimSpace(body)
+
 		fmt.Printf("Got: '%s'\n", msg.Text)
 
-		gotify.Message("Test", msg.Text, 5)
+		gotify.Message(title, body, 5)
 	})
 
 	router.Run(":8080")
